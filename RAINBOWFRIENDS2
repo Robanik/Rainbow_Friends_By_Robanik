@@ -1,23 +1,67 @@
--- 🌀 УНИВЕРСАЛЬНОЕ МЕНЮ ДЛЯ ROBLOX [BY ROBANIK]
+-- 🌀 УНИВЕРСАЛЬНОЕ МЕНЮ С КЛЮЧ-СИСТЕМОЙ
 local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
+
+-- 🔑 Ключи (можно добавить несколько)
+local VALID_KEYS = {
+    "RainbowRR",
+}
+
+-- 🔗 Ссылка на получение ключа
+local GET_KEY_LINK = "https://discord.gg/sEHz2Ex7"
 
 local player = game.Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
 
--- Кнопка открытия меню (с иконкой)
-local OpenButton = Instance.new("ImageButton")
-OpenButton.Parent = ScreenGui
-OpenButton.Size = UDim2.new(0, 60, 0, 60)
-OpenButton.Position = UDim2.new(0, 20, 0.5, -30)
-OpenButton.BackgroundTransparency = 1
-OpenButton.Image = BUTTON_IMAGE_ID
-OpenButton.ScaleType = Enum.ScaleType.Fit
-local UICornerOB = Instance.new("UICorner", OpenButton)
-UICornerOB.CornerRadius = UDim.new(1, 0) -- круглая
+-- Окно ввода ключа
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Parent = ScreenGui
+KeyFrame.Size = UDim2.new(0, 300, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
 
--- Фрейм меню
+local KeyLabel = Instance.new("TextLabel", KeyFrame)
+KeyLabel.Size = UDim2.new(1, 0, 0, 40)
+KeyLabel.BackgroundTransparency = 1
+KeyLabel.Text = "Введите ключ:"
+KeyLabel.Font = Enum.Font.GothamBold
+KeyLabel.TextSize = 18
+KeyLabel.TextColor3 = Color3.fromRGB(255,255,255)
+
+local KeyBox = Instance.new("TextBox", KeyFrame)
+KeyBox.Size = UDim2.new(0.8, 0, 0, 35)
+KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyBox.PlaceholderText = "Ваш ключ..."
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 16
+KeyBox.BackgroundColor3 = Color3.fromRGB(35,35,35)
+KeyBox.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0,8)
+
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+SubmitBtn.Size = UDim2.new(0.6, 0, 0, 35)
+SubmitBtn.Position = UDim2.new(0.2, 0, 0.65, 0)
+SubmitBtn.Text = "Подтвердить"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 16
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+SubmitBtn.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0,8)
+
+local GetKeyBtn = Instance.new("TextButton", KeyFrame)
+GetKeyBtn.Size = UDim2.new(0.6, 0, 0, 35)
+GetKeyBtn.Position = UDim2.new(0.2, 0, 0.82, 0)
+GetKeyBtn.Text = "Get Key"
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.TextSize = 16
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+GetKeyBtn.TextColor3 = Color3.fromRGB(0,0,0)
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0,8)
+
+-- Главное меню
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
 MainFrame.Size = UDim2.new(0, 500, 0, 350)
@@ -26,23 +70,17 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.Visible = false
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 15)
 
--- 🏷️ Шапка меню (информация о скрипте)
-local HeaderFrame = Instance.new("Frame")
-HeaderFrame.Parent = MainFrame
-HeaderFrame.Size = UDim2.new(1, -20, 0, 40)
-HeaderFrame.Position = UDim2.new(0, 10, 0, 10)
-HeaderFrame.BackgroundTransparency = 1
-
-local HeaderLabel = Instance.new("TextLabel")
-HeaderLabel.Parent = HeaderFrame
-HeaderLabel.Size = UDim2.new(1, 0, 1, 0)
+-- Шапка меню
+local HeaderLabel = Instance.new("TextLabel", MainFrame)
+HeaderLabel.Size = UDim2.new(1, 0, 0, 40)
+HeaderLabel.Position = UDim2.new(0, 10, 0, 10)
 HeaderLabel.BackgroundTransparency = 1
 HeaderLabel.TextColor3 = Color3.fromRGB(255,255,255)
 HeaderLabel.Font = Enum.Font.GothamBold
 HeaderLabel.TextSize = 16
 HeaderLabel.Text = "BY ROBANIK | RAINBOW FRIENDS 2"
 
--- Скроллируемые вкладки сверху
+-- Вкладки
 local TabScroll = Instance.new("ScrollingFrame")
 TabScroll.Parent = MainFrame
 TabScroll.Size = UDim2.new(1, -20, 0, 40)
@@ -60,7 +98,6 @@ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 10)
 UIListLayout.Parent = TabScroll
 
--- Контент
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Parent = MainFrame
 ContentFrame.Size = UDim2.new(1, -20, 1, -110)
@@ -82,11 +119,9 @@ local function AddTab(name)
     btn.BackgroundTransparency = 1
     btn.Parent = TabScroll
 
-    -- Автообновление CanvasSize
     wait()
     TabScroll.CanvasSize = UDim2.new(0, UIListLayout.AbsoluteContentSize.X + 10, 0, 0)
 
-    -- Создаём страницу для вкладки
     local page = Instance.new("ScrollingFrame", ContentFrame)
     page.Size = UDim2.new(1,0,1,0)
     page.CanvasSize = UDim2.new(0,0,0,0)
@@ -95,7 +130,6 @@ local function AddTab(name)
     page.BackgroundTransparency = 1
     Pages[name] = page
 
-    -- Клик по вкладке
     btn.MouseButton1Click:Connect(function()
         if CurrentPage then CurrentPage.Visible = false end
         page.Visible = true
@@ -108,7 +142,7 @@ local function AddTab(name)
     end
 end
 
--- 📌 Функция добавления кнопки в вкладку
+-- 📌 Функция добавления кнопки
 local function AddButton(tabName, text, callback)
     local page = Pages[tabName]
     if not page then return warn("Вкладка "..tabName.." не найдена!") end
@@ -123,20 +157,50 @@ local function AddButton(tabName, text, callback)
     btn.TextColor3 = Color3.fromRGB(255,255,255)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
-    -- Автоувеличение скролла
     page.CanvasSize = UDim2.new(0,0,0,(#page:GetChildren()-1)*50+60)
 
     btn.MouseButton1Click:Connect(callback)
 end
 
--- 📌 Открыть / закрыть меню
+-- Кнопка открытия меню (после ввода ключа)
+local OpenButton = Instance.new("ImageButton")
+OpenButton.Parent = ScreenGui
+OpenButton.Size = UDim2.new(0, 60, 0, 60)
+OpenButton.Position = UDim2.new(0, 20, 0.5, -30)
+OpenButton.BackgroundTransparency = 1
+OpenButton.Image = BUTTON_IMAGE_ID
+OpenButton.ScaleType = Enum.ScaleType.Fit
+OpenButton.Visible = false
+Instance.new("UICorner", OpenButton).CornerRadius = UDim.new(1, 0)
+
 local menuOpen = false
 OpenButton.MouseButton1Click:Connect(function()
     menuOpen = not menuOpen
     MainFrame.Visible = menuOpen
 end)
 
--- Пример использования
+-- Проверка ключа
+SubmitBtn.MouseButton1Click:Connect(function()
+    local input = KeyBox.Text
+    for _, key in ipairs(VALID_KEYS) do
+        if input == key then
+            KeyFrame.Visible = false
+            OpenButton.Visible = true
+            return
+        end
+    end
+    KeyLabel.Text = "❌ Неверный ключ!"
+    KeyLabel.TextColor3 = Color3.fromRGB(255,100,100)
+end)
+
+-- 📌 Кнопка Get Key (копирует ссылку)
+GetKeyBtn.MouseButton1Click:Connect(function()
+    setclipboard(GET_KEY_LINK) -- ⚡ копирует ссылку
+    KeyLabel.Text = "✔️ Ссылка скопирована!"
+    KeyLabel.TextColor3 = Color3.fromRGB(100,255,100)
+end)
+
+-- 📌 Пример
 AddTab("Home")
 AddTab("Player")
 AddTab("Esp")
@@ -360,6 +424,18 @@ end)
 AddButton("Afk", "afk", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,10,0)
 end)
+
+AddButton("Afk", "off afk", function()
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+local target = game.Workspace.Table.Table["001"]
+
+-- Телепортируемся на 20 единиц выше
+hrp.CFrame = target.CFrame + Vector3.new(0, 20, 0)
+end)
+
 
 ------------------------------------------------
 
